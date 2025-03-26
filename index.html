@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крипто стоп лос калкулатор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Крипто стоп лос калкулатор</h1>
+    <label>Цена на закупуване ($): <input type="number" id="buyPrice"></label><br><br>
+    <label>Стоп лос (%): <input type="number" id="stopLossPercent"></label><br><br>
+    <button onclick="calculateStopLoss()">Изчисли</button>
+    <p id="stopLossResult"></p>
+    
+    <hr>
+    
+    <label><input type="checkbox" id="toggleTokens" onchange="toggleInput('tokensDiv')"> Изчисли по брой токени</label>
+    <div id="tokensDiv" class="hidden">
+        <label>Брой токени: <input type="number" id="tokenAmount"></label>
+        <p id="tokenValue"></p>
+    </div>
+    
+    <label><input type="checkbox" id="toggleSellAmount" onchange="toggleInput('sellAmountDiv')"> Изчисли по сума за продажба</label>
+    <div id="sellAmountDiv" class="hidden">
+        <label>Сума за продажба ($): <input type="number" id="sellAmount"></label>
+        <p id="sellTokens"></p>
+    </div>
+    
+    <script>
+        function calculateStopLoss() {
+            let buyPrice = parseFloat(document.getElementById("buyPrice").value);
+            let stopLossPercent = parseFloat(document.getElementById("stopLossPercent").value);
+            
+            if (!buyPrice || !stopLossPercent) {
+                alert("Моля, въведете всички стойности!");
+                return;
+            }
+            
+            let stopLossPrice = buyPrice - (buyPrice * stopLossPercent / 100);
+            document.getElementById("stopLossResult").innerText = "Стоп лос цена: " + stopLossPrice.toFixed(2) + " $";
+            
+            if (document.getElementById("toggleTokens").checked) {
+                let tokenAmount = parseFloat(document.getElementById("tokenAmount").value);
+                if (tokenAmount) {
+                    document.getElementById("tokenValue").innerText = "Стойност на токените при стоп лос: " + (tokenAmount * stopLossPrice).toFixed(2) + " $";
+                }
+            }
+            
+            if (document.getElementById("toggleSellAmount").checked) {
+                let sellAmount = parseFloat(document.getElementById("sellAmount").value);
+                if (sellAmount) {
+                    document.getElementById("sellTokens").innerText = "Брой токени за продажба: " + (sellAmount / stopLossPrice).toFixed(2);
+                }
+            }
+        }
+        
+        function toggleInput(divId) {
+            let div = document.getElementById(divId);
+            div.classList.toggle("hidden");
+        }
+    </script>
+</body>
+</html>
