@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крипто Калкулатор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Крипто Калкулатор</h2>
+        
+        <div class="input-group">
+            <label>Цена на покупка ($): </label>
+            <input type="number" id="buyPrice" step="0.01">
+        </div>
+        <div class="input-group">
+            <label>Стоп Лос (%): </label>
+            <input type="number" id="stopLossPercent" step="0.01">
+        </div>
+        <div class="input-group">
+            <input type="checkbox" id="toggleTokens"> Включи броя на токените
+        </div>
+        <div id="tokensInput" class="input-group hidden">
+            <label>Брой токени: </label>
+            <input type="number" id="tokens">
+        </div>
+        <div class="input-group">
+            <input type="checkbox" id="toggleStopLimit"> Включи Стоп-Лимит
+        </div>
+        <div id="stopLimitInput" class="hidden">
+            <div class="input-group">
+                <label>Стоп цена ($): </label>
+                <input type="number" id="stopPrice" step="0.01">
+            </div>
+            <div class="input-group">
+                <label>Лимит цена ($): </label>
+                <input type="number" id="limitPrice" step="0.01">
+            </div>
+        </div>
+        
+        <button onclick="calculate()">Изчисли</button>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Стоп Лос Цена ($)</th>
+                    <th id="tokensHeader" class="hidden">Колко токена да продам</th>
+                    <th id="stopLimitHeader" class="hidden">Лимит Цена ($)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="stopLossResult">-</td>
+                    <td id="tokensResult" class="hidden">-</td>
+                    <td id="limitPriceResult" class="hidden">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.getElementById('toggleTokens').addEventListener('change', function() {
+            document.getElementById('tokensInput').classList.toggle('hidden', !this.checked);
+            document.getElementById('tokensHeader').classList.toggle('hidden', !this.checked);
+            document.getElementById('tokensResult').classList.toggle('hidden', !this.checked);
+        });
+
+        document.getElementById('toggleStopLimit').addEventListener('change', function() {
+            document.getElementById('stopLimitInput').classList.toggle('hidden', !this.checked);
+            document.getElementById('stopLimitHeader').classList.toggle('hidden', !this.checked);
+            document.getElementById('limitPriceResult').classList.toggle('hidden', !this.checked);
+        });
+
+        function calculate() {
+            let buyPrice = parseFloat(document.getElementById('buyPrice').value);
+            let stopLossPercent = parseFloat(document.getElementById('stopLossPercent').value);
+            let stopLossPrice = buyPrice - (buyPrice * (stopLossPercent / 100));
+            document.getElementById('stopLossResult').innerText = stopLossPrice.toFixed(2);
+
+            if (document.getElementById('toggleTokens').checked) {
+                let tokens = parseFloat(document.getElementById('tokens').value);
+                let totalSellValue = tokens * stopLossPrice;
+                document.getElementById('tokensResult').innerText = totalSellValue.toFixed(2);
+            }
+
+            if (document.getElementById('toggleStopLimit').checked) {
+                let stopPrice = parseFloat(document.getElementById('stopPrice').value);
+                let limitPrice = parseFloat(document.getElementById('limitPrice').value);
+                document.getElementById('limitPriceResult').innerText = limitPrice.toFixed(2);
+            }
+        }
+    </script>
+</body>
+</html>
